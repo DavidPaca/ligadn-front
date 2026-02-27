@@ -1,0 +1,160 @@
+/* ===== HERO SECTION ===== */
+.hero-section {
+  width: 100%;
+  /* background: linear-gradient(180deg, #14532d 0%, #166534 50%, #14532d 100%); */
+  background: linear-gradient(180deg, #171949 0%, #171949 50%, #171949 100%);
+  padding: 60px 16px;
+  box-sizing: border-box;
+}
+
+.hero-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+/* ===== CARD BASE ===== */
+.hero-card {
+  width: 100%;
+  border-radius: 20px;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  cursor: default;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ===== CARD BIENVENIDOS ===== */
+.card-bienvenidos {
+  max-width: 340px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+}
+
+.card-bienvenidos:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.card-bienvenidos h1 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  /* color: #86efac; */
+  color: #ef6b20;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ===== CARD LIGA ===== */
+.card-liga {
+  max-width: 680px;
+  background: rgba(255, 255, 255, 0.07);
+  /* border: 2px solid rgba(250, 204, 21, 0.35); */
+  border: 2px solid rgba(247, 120, 17, 0.815);
+  backdrop-filter: blur(8px);
+}
+
+.card-liga:hover {
+  transform: translateY(-6px);
+  /* box-shadow: 0 16px 48px rgba(250, 204, 21, 0.2), 0 0 0 1px rgba(250, 204, 21, 0.4); */
+  box-shadow: 0 16px 48px rgba(247, 120, 17, 0.815), 0 0 0 1px rgba(247, 120, 17, 0.815);
+  /* border-color: rgba(250, 204, 21, 0.7); */
+  border-color: rgba(247, 120, 17, 0.815);
+}
+
+.card-liga h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 900;
+  /* color: #facc15; */
+  color: #fff;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== ESTRELLAS ===== */
+.stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ef6b20;
+  margin-top: 4px;
+}
+
+.star-sm { font-size: 0.8rem; }
+.star-lg { font-size: 1.2rem; }
+
+/* ===== SUBTÍTULO ===== */
+.hero-subtitle {
+  /* color: #bbf7d0; */
+  color: #fff;
+  font-size: 0.95rem;
+  max-width: 320px;
+  opacity: 0.85;
+  line-height: 1.7;
+  margin: 0;
+  text-align: center;
+  padding-left: 85px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet */
+@media (min-width: 640px) {
+  .hero-section {
+    padding: 72px 32px;
+  }
+
+  .card-bienvenidos h1 {
+    font-size: 1.25rem;
+  }
+
+  .card-liga h1 {
+    font-size: 2.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 2rem;
+    /* max-width: 380px; */
+    /* padding: 80px; */
+    /* color: #1111; */
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .hero-section {
+    padding: 90px 48px;
+  }
+
+  .card-bienvenidos {
+    max-width: 380px;
+    padding: 28px 40px;
+  }
+
+  .card-bienvenidos h1 {
+    font-size: 1.4rem;
+  }
+
+  .card-liga {
+    max-width: 720px;
+    padding: 40px 60px;
+  }
+
+  .card-liga h1 {
+    font-size: 3.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    max-width: 420px;
+  }
+}

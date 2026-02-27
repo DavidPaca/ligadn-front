@@ -1,0 +1,603 @@
+/*                         *******************************************************/
+    /**********************                     SIDEBAR                      *********************/
+/*                         *******************************************************/
+/* Contenedor Principal */
+.admin-layout-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f1f5f9;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Sidebar */
+.admin-sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #0f172a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+/* Logo Area */
+.sidebar-header {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #1e293b;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #4ade80;
+    /* Verde */
+}
+
+/* Navegación */
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem 0.75rem;
+}
+
+.nav-section-title {
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+}
+
+/* Links: Aquí se arregla la alineación */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    /* Alinea verticalmente icono y texto */
+    gap: 12px;
+    /* Espacio horizontal entre icono y texto */
+    padding: 0.75rem 1rem;
+    color: #94a3b8;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: 0.2s;
+    margin-bottom: 4px;
+}
+
+.sidebar-link:hover {
+    /* background-color: #1e293b; */
+    background-color: #1e293b;
+    color: white;
+}
+
+.sidebar-link.active {
+    background-color: #16a34a !important;
+    color: white !important;
+}
+/* Agregamos esto para asegurar que el botón del dropdown se vea igual al estar abierto */
+.sidebar-dropdown .sidebar-link.active {
+    background-color: #16a34a;
+    color: rgb(236, 8, 8);
+    margin-bottom: 4px; /* Mantiene la estética de los otros botones */
+}
+
+/* Responsividad para móviles */
+@media (max-width: 1024px) {
+    .admin-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        width: 280px; /* Un poco más ancho en móviles para legibilidad */
+        box-shadow: 10px 0 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .admin-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.75); /* Color de fondo del sidebar con transparencia */
+        backdrop-filter: blur(4px); /* Efecto moderno de desenfoque */
+        z-index: 90;
+        animation: fadeIn 0.3s ease;
+    }
+
+    /* Evitar que el contenido se mueva cuando el sidebar está fijo */
+    .admin-layout-container {
+        position: relative;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Optimización para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .admin-sidebar {
+        width: 85%; /* Ocupa casi toda la pantalla en teléfonos pequeños */
+    }
+}
+
+/* --- CONTENEDOR DE SUBMENÚ --- */
+.submenu-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  padding-left: 28px; /* Indentación */
+  margin-left: 1px;  /* Espacio para la línea conectora */
+  /*border-left: 1px solid #16a34a;*/ /* Línea guía lateral */
+
+}
+
+.submenu-container.expanded {
+  max-height: 200px; /* Suficiente para los hijos */
+  margin-bottom: 8px;
+  
+}
+
+/* --- ESTILO DE LOS SUBLINK --- */
+.sidebar-sublink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  /* color: #64748b; */
+  color: #64748b;
+  text-decoration: none;
+  font-size: 13.5px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.sidebar-sublink:hover {
+  background-color: #16a34a;
+  /* color: #10b981; */
+  color: #ecfdf5;
+}
+
+.sidebar-sublink.active {
+ /* background-color: #ecfdf5;*/ /* Verde muy suave */
+  background-color: #16a34a; /* Verde muy suave */
+  color: #ecfdf5; /* Verde principal */
+  font-weight: 600;
+}
+
+.sidebar-sublink svg {
+  opacity: 0.7;
+}
+
+/* --- AJUSTE PARA EL BOTÓN DROPDOWN --- */
+.sidebar-dropdown .sidebar-link {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
+  cursor: pointer;
+  
+}
+
+.link-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+}
+
+
+/*                         *******************************************************/
+    /**********************                        NAVBAR                        *********************/
+/*                         *******************************************************/
+/* --- Estilos del Navbar --- */
+.admin-navbar {
+    height: 64px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 80;
+}
+
+/* Botón Hamburguesa (Oculto en escritorio) */
+.nav-menu-btn {
+    display: none;
+    background: #f1f5f9;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #64748b;
+    transition: background 0.2s;
+}
+
+.nav-menu-btn:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+/* Sección de Usuario */
+.nav-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto; /* Empuja todo a la derecha */
+}
+
+.user-text {
+    text-align: right;
+}
+
+.user-name {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.user-role {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #22c55e; /* Verde de la liga */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 2px solid #f8fafc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- Dropdown del Usuario --- */
+.user-menu-container {
+    position: relative; /* Necesario para posicionar el dropdown */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.user-menu-container:hover {
+    background-color: #f8fafc;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 120%; /* Aparece justo debajo */
+    right: 0;
+    width: 200px;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    display: none; /* Oculto por defecto */
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 100;
+}
+
+/* Clase para mostrar el dropdown con JS */
+.user-dropdown.show {
+    display: flex;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #475569;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #e2e8f0;
+    margin: 4px 0;
+}
+
+.dropdown-item.logout {
+    color: #ef4444; /* Rojo para cerrar sesión */
+}
+
+.dropdown-item.logout:hover {
+    background-color: #fef2f2;
+}
+
+/* Responsividad del Navbar */
+@media (max-width: 1024px) {
+    .nav-menu-btn {
+        display: flex; /* Se muestra solo en móviles/tablets */
+    }
+
+    .user-text {
+        display: none; /* Ocultamos el texto en pantallas muy pequeñas para ahorrar espacio */
+    }
+}
+
+/*                         *******************************************************/
+    /**********************                        EQUIPOS                       *********************/
+/*                         *******************************************************/
+/* --- Estilos de la Página de Equipos --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.btn-add {
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #15803d;
+}
+
+/* Contenedor de la Tabla */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow-x: auto; /* Responsivo para tablas anchas */
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th {
+    background-color: #f8fafc;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-table td {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    font-size: 14px;
+}
+
+.admin-table tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Elementos dentro de la tabla */
+.team-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.team-logo-placeholder {
+    width: 36px;
+    height: 36px;
+    background-color: #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active { background: #dcfce7; color: #166534; }
+.status-inactive { background: #fee2e2; color: #991b1b; }
+
+.actions-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    background: none;
+    border: 1px solid #e2e8f0;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    border-color: #cbd5e1;
+    background-color: #f1f5f9;
+}
+
+/*//////////////////////////*/
+/* --- Estilos Responsivos para Equipos --- */
+
+.page-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap; /* Permite que los elementos bajen si no hay espacio */
+}
+
+.header-text {
+    flex: 1;
+    min-width: 250px;
+}
+
+.page-subtitle {
+    color: #64748b;
+    font-size: 14px;
+    marginTop: 4px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center; /* Alinea verticalmente los centros */
+}
+
+.search-input {
+    width: 300px;
+}
+
+.btn-add-equipo {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+/* TABLE CONTAINER AJUSTES */
+.table-container {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Evita que la sombra se corte */
+}
+
+/* --- MEDIA QUERIES PARA MÓVILES --- */
+@media (max-width: 768px) {
+    .page-header-container {
+        flex-direction: column; /* Apila título y acciones */
+        align-items: stretch;
+    }
+
+    .header-actions {
+        flex-direction: column; /* Apila Buscador y Botón */
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100% !important; /* Buscador ocupa todo el ancho */
+    }
+
+    .btn-add-equipo {
+        width: 100%; /* Botón ocupa todo el ancho */
+        justify-content: center;
+    }
+
+    .page-title {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+
+
+/*                         *******************************************************/
+    /**********************                        DATATABLE                     *********************/
+/*                         *******************************************************/
+/* --- Arreglos de visibilidad para DataTable --- */
+
+/* 1. Selector de número de filas (el dropdown que se ve vacío) */
+.dataTables_length select {
+    color: #1e293b !important; /* Gris oscuro/Negro */
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 4px !important;
+    border-radius: 4px !important;
+}
+
+/* 2. El texto del buscador (lo que escribes) */
+.dataTables_filter input {
+    color: #1e293b !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    padding: 5px 10px !important;
+}
+
+/* 3. Números de paginación (Primero, Anterior, 1, Siguiente...) */
+.dataTables_paginate .paginate_button {
+    color: #475569 !important; /* Gris */
+}
+
+.dataTables_paginate .paginate_button.current {
+    color: #ffffff !important; /* Blanco solo para el activo */
+    background: #16a34a !important; /* Fondo verde */
+    border: 1px solid #16a34a !important;
+}
+
+/* 4. Texto informativo (Showing 1 to 2 of 2 entries) */
+.dataTables_info {
+    color: #64748b !important;
+    font-size: 0.85rem !important;
+    margin-top: 10px !important;
+}
+
+/* 5. Asegurar que las flechas de ordenamiento sean visibles */
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting:after {
+    color: #94a3b8 !important;
+    opacity: 0.8 !important;
+}
