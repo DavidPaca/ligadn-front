@@ -601,3 +601,448 @@ table.dataTable thead .sorting:after {
     color: #94a3b8 !important;
     opacity: 0.8 !important;
 }
+
+
+/*                         *******************************************************/
+    /**********************                        DASHBOARD                      *********************/
+/*                         *******************************************************/
+/* --- Estilos Generales de la Página --- */
+/* =============================================
+   LIGA ADMIN — StylesAdmin.css
+   Tema: Claro, moderno, responsivo
+   ============================================= */
+
+/* ---------- RESET & BASE ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+/* ---------- PAGE WRAPPER ---------- */
+.dashboard-page {
+  padding: 28px 24px;
+  min-height: 100vh;
+  background: #f1f5f9;
+}
+
+/* ---------- HEADER ---------- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.dashboard-header__titles h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+}
+
+.dashboard-header__titles p {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 6px #10b981;
+  animation: pulse-dot 1.5s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+/* ---------- BUTTON PRIMARY ---------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+}
+
+/* ---------- STATS GRID ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.stat-card__icon {
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-card__icon--blue   { background: #3b82f6; box-shadow: 0 4px 12px rgba(59,130,246,0.35); }
+.stat-card__icon--green  { background: #10b981; box-shadow: 0 4px 12px rgba(16,185,129,0.35); }
+.stat-card__icon--purple { background: #a855f7; box-shadow: 0 4px 12px rgba(168,85,247,0.35); }
+.stat-card__icon--orange { background: #f59e0b; box-shadow: 0 4px 12px rgba(245,158,11,0.35); }
+
+.stat-card__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.stat-card__value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+/* ---------- MAIN GRID ---------- */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 900px) {
+  .main-grid {
+    grid-template-columns: 1fr 320px;
+  }
+}
+
+/* ---------- CARD BASE ---------- */
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.card__header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card__title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+/* ---------- LINK BUTTON ---------- */
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.btn-link:hover { color: #059669; text-decoration: underline; }
+
+/* ---------- MATCH ROWS ---------- */
+.match-row {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f8fafc;
+  transition: background 0.15s;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.match-row:last-child { border-bottom: none; }
+.match-row:hover { background: #f8fafc; }
+
+.match-row__date {
+  text-align: center;
+  min-width: 56px;
+}
+
+.match-row__date-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.match-row__time {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.match-row__teams {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.match-row__team {
+  font-weight: 600;
+  color: #334155;
+  font-size: 14px;
+}
+
+.match-row__vs {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+  padding: 2px 8px;
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+.match-row__badge {
+  padding: 4px 10px;
+  background: #ecfdf5;
+  color: #059669;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ---------- RIGHT COLUMN ---------- */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- LIVE CARD ---------- */
+.live-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+}
+
+.live-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.live-card__badge span {
+  font-size: 10px;
+  font-weight: 800;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.live-card__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+}
+
+.live-card__subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+.live-card__deco {
+  position: absolute;
+  right: -12px;
+  bottom: -12px;
+  opacity: 0.07;
+  color: #10b981;
+  pointer-events: none;
+}
+
+.btn-live {
+  width: 100%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  position: relative;
+  z-index: 1;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-live:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+/* ---------- PROGRESS CARD ---------- */
+.progress-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.progress-card__title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.progress-item {
+  margin-bottom: 16px;
+}
+
+.progress-item:last-child { margin-bottom: 0; }
+
+.progress-item__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.progress-item__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.progress-item__pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.progress-bar__fill--green  { background: linear-gradient(90deg, #10b981, #34d399); box-shadow: 0 0 6px rgba(16,185,129,0.5); }
+.progress-bar__fill--blue   { background: linear-gradient(90deg, #3b82f6, #60a5fa); box-shadow: 0 0 6px rgba(59,130,246,0.5); }
+.progress-bar__fill--amber  { background: linear-gradient(90deg, #f59e0b, #fbbf24); box-shadow: 0 0 6px rgba(245,158,11,0.5); }
+
+/* ---------- STATS FOOTER ---------- */
+.stats-footer {
+  margin-top: 16px;
+  padding: 14px;
+  background: #f8fafc;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.stats-footer__text p:first-child {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.stats-footer__text p:last-child {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 640px) {
+  .dashboard-page { padding: 16px; }
+  .dashboard-header h1 { font-size: 20px; }
+  .stat-card__value { font-size: 22px; }
+  .match-row__teams { justify-content: flex-start; }
+  .match-row__badge { display: none; }
+}
