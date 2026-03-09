@@ -1,35 +1,39 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, ChevronDown, ChevronRight, History, List } from "lucide-react";
+import { LayoutDashboard, Users, ChevronDown, ChevronRight, History, List, Trophy, UserCog } from "lucide-react";
 
 function Sidebar({ isOpen, toggleSidebar }) {
   const location = useLocation();
-  // Inicializamos basado en la URL para evitar el primer "salto"
+  
+  // Inicializamos basado en la URL para que el submenú correspondiente aparezca abierto al cargar
   const [isEquiposOpen, setIsEquiposOpen] = useState(location.pathname.includes("equipos"));
   const [isVocaliaOpen, setIsVocaliaOpen] = useState(location.pathname.includes("vocalias"));
+  const [isChampionshipOpen, setIsChampionshipOpen] = useState(location.pathname.includes("championship"));
 
-  // 1. Efecto para manejar la lógica de rutas y móviles
   useEffect(() => {
     const isInEquiposRoute = location.pathname.includes("equipos");
+    const isInVocaliaRoute = location.pathname.includes("vocalias");
+    const isInChampionshipRoute = location.pathname.includes("championship");
 
-    // Usamos un pequeño delay técnico para evitar el error de "cascading renders"
-    // Esto hace que el cambio sea asíncrono y React lo acepte sin quejas.
-    if (!isInEquiposRoute && isEquiposOpen) {
-      const timer = setTimeout(() => {
-        setIsEquiposOpen(false);
-        setIsVocaliaOpen(false);
-      }, 0);
-      return () => clearTimeout(timer);
-    }
+    // Si salimos de una ruta, cerramos su submenú (Lógica asíncrona para evitar errores de renderizado)
+    const timer = setTimeout(() => {
+      if (!isInEquiposRoute) setIsEquiposOpen(false);
+      if (!isInVocaliaRoute) setIsVocaliaOpen(false);
+      if (!isInChampionshipRoute) setIsChampionshipOpen(false);
+    }, 0);
 
-    // 2. Lógica para móviles
+    // Lógica para móviles: cerrar sidebar al navegar
     if (isOpen && window.innerWidth <= 1024) {
       toggleSidebar();
     }
-  }, [location.pathname]); // Mantenemos tu estructura original de dependencias
 
-  const isParentActive = location.pathname.includes("equipos") || isEquiposOpen;
-  const isParentActivevocalia = location.pathname.includes("vocalias") || isVocaliaOpen;
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  // Estados de "Padre Activo" para iluminar el botón principal si una subruta está activa
+  const isParentActiveEquipos = location.pathname.includes("equipos") || isEquiposOpen;
+  const isParentActiveVocalia = location.pathname.includes("vocalias") || isVocaliaOpen;
+  const isParentActiveChampionship = location.pathname.includes("championship") || isChampionshipOpen;
 
   return (
     <>
@@ -51,12 +55,46 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <span>Dashboard</span>
           </NavLink>
 
+          {/* ITEM CON SUBMENÚ TORNEOS - CORREGIDO */}
+          <div className="sidebar-dropdown">
+            <button
+              type="button"
+              className={`sidebar-link ${isParentActiveChampionship ? "active" : ""}`}
+              onClick={() => setIsChampionshipOpen(!isChampionshipOpen)} // Cambia su propio estado
+              style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+            >
+              <div className="link-content">
+                <Trophy size={20} /> {/* Cambiado a Trophy para diferenciar de Equipos */}
+                <span>Torneos</span>
+              </div>
+              {isChampionshipOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+
+            <div className={`submenu-container ${isChampionshipOpen ? "expanded" : ""}`}>
+              <NavLink
+                to="/admin/torneos/torneos-activos" // Ruta corregida
+                className={({ isActive }) => isActive ? "sidebar-sublink active" : "sidebar-sublink"}
+              >
+                <List size={16} />
+                <span>Torneos Activos</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/torneos/torneos-activos" // Ruta corregida
+                className={({ isActive }) => isActive ? "sidebar-sublink active" : "sidebar-sublink"}
+              >
+                <History size={16} />
+                <span>Torneos Históricos</span>
+              </NavLink>
+            </div>
+          </div>
+
           {/* ITEM CON SUBMENÚ EQUIPO */}
           <div className="sidebar-dropdown">
             <button
               type="button"
-              className={`sidebar-link ${isParentActive ? "active" : ""}`}
-              onClick={() => setIsEquiposOpen(!isEquiposOpen)}
+              className={`sidebar-link ${isParentActiveEquipos ? "active" : ""}`}
+              onClick={() => setIsEquiposOpen(!isEquiposOpen)} // Cambia su propio estado
               style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
             >
               <div className="link-content">
@@ -89,12 +127,12 @@ function Sidebar({ isOpen, toggleSidebar }) {
           <div className="sidebar-dropdown">
             <button
               type="button"
-              className={`sidebar-link ${isParentActivevocalia ? "active" : ""}`}
+              className={`sidebar-link ${isParentActiveVocalia ? "active" : ""}`}
               onClick={() => setIsVocaliaOpen(!isVocaliaOpen)}
               style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
             >
               <div className="link-content">
-                <Users size={20} />
+                <UserCog size={20} /> {/* Icono cambiado para consistencia visual */}
                 <span>Vocalia</span>
               </div>
               {isVocaliaOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}

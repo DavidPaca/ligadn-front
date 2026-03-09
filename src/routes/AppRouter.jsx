@@ -12,6 +12,7 @@ import EquiposHistoricoPage from "../pages/admin/equipo/EquipoHistoricoPage";
 import VocaliaPage from "../pages/admin/vacalia/vocaliaPage";
 import VocaliaHistoricoPage from "../pages/admin/vacalia/VocaliaHistorico";
 import TournamentCreatePage from "../pages/admin/championship/TournamentCreatePage";
+import ChampionshipPage from "../pages/admin/championship/ChampionshipPage";
 
 // Componente para proteger rutas
 const ProtectedRoute = ({ children }) => {
@@ -37,7 +38,11 @@ const AppRouter = () => {
                 {/* Rutas admin */}
                 <Route path="/admin" element={<MainLayout />}>
                     <Route path="dashboard" element={<DashboardPage />} />
-                    <Route path="championship" element={<TournamentCreatePage />} />
+                    <Route path="torneos">
+                        <Route path="torneos-activos" element={<ChampionshipPage />} />
+                        <Route path="torneos-activos" element={<ChampionshipPage />} />
+                    </Route>
+
                     <Route path="equipos" >
                         <Route path="lista" element={<EquiposPage />} />
                         <Route path="historico" element={<EquiposHistoricoPage />} />
