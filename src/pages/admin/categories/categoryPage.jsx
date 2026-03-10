@@ -1,35 +1,34 @@
 import { useEffect, useState } from "react";
-// Se agregó Trophy a los imports
 import { Table, Button, Space, Tooltip, Tag, Typography, Input, Form, Modal, Select } from "antd";
 import { Edit, Trash2, Plus, Trophy } from "lucide-react";
-import { getChampionshipAC, createChampionship, updateChampionship, deleteChampionship } from "../../../services/ChampionshipService";
+import { getCategories, createCategory, updateCategory, deleteCategory } from "../../../services/CategoriesService";
 import Swal from "sweetalert2";
 
 const { Text } = Typography;
-const { Search } = Input;
+const { Search, TextArea } = Input;
 
-const ChampionshipPage = () => {
+const CategoryPage = () => {
     const [dataList, setDataList] = useState([]); // Datos que se muestran (filtrados)
     const [filteredData, setFilteredData] = useState([]); // Datos que se muestran (filtrados)
     const [isLoading, setIsLoading] = useState(true);
     // --- ESTADOS PARA MODALES SEPARADOS ---
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
     const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
-    const [selectedEquipo, setSelectedEquipo] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     // const [championshipsData, setChampionshipsData] = useState([]);
 
     const [createForm] = Form.useForm();
     const [updateForm] = Form.useForm();
 
     /////////// LISTAR EQUIPOS ///////////
-    const ChampionshipList = async () => {
+    const categoryList = async () => {
         try {
             setIsLoading(true);
-            const response = await getChampionshipAC();
+            const response = await getCategories();
             console.log("response torneos:", response);
             const dataWithKeys = response.map(item => ({
                 ...item,
-                key: item.championship_id
+                key: item.category_id
             }));
             setDataList(dataWithKeys);
             setFilteredData(dataWithKeys); // Inicializar también los filtrados
@@ -44,11 +43,11 @@ const ChampionshipPage = () => {
     ///////// INSERTAR EQUIPO ///////////
     const dataRowCreate = async (values) => {
         try {
-            await createChampionship(values);
+            await createCategory(values);
             Swal.fire("¡Éxito!", "Equipo creado correctamente", "success");
             setIsCreateModalVisible(false);
             createForm.resetFields();
-            ChampionshipList();
+            categoryList();
         } catch {
             console.error("No se pudo crear el equipo");
         }
@@ -57,11 +56,11 @@ const ChampionshipPage = () => {
     // /////////// ACTUALIZAR EQUIPO ///////////
     const dataRowUpdate = async (values) => {
         try {
-            await updateChampionship(selectedEquipo.equipo_id, values);
+            await updateCategory(selectedCategory.category_id, values);
             Swal.fire("¡Éxito!", "Equipo actualizado correctamente", "success");
             setIsUpdateModalVisible(false);
             updateForm.resetFields();
-            ChampionshipList();
+            categoryList();
         } catch {
             console.error("No se pudo actualizar el equipo");
         }
@@ -81,9 +80,9 @@ const ChampionshipPage = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await deleteChampionship(equipo_id);
+                    await deleteCategory(equipo_id);
                     Swal.fire("¡Eliminado!", "El equipo ha sido eliminado.", "success");
-                    ChampionshipList();
+                    categoryList();
                 } catch {
                     Swal.fire("Error", "No se pudo eliminar el equipo", "error");
                 }
@@ -94,38 +93,36 @@ const ChampionshipPage = () => {
     /////////// FUNCIÓN DE BÚSQUEDA ///////////
     const handleSearch = (value) => {
         const term = value.toLowerCase();
-        console.log("term:", term);
         const filtered = dataList.filter(item =>
-            item.name.toLowerCase().includes(term) ||
-            item.type.toLowerCase().includes(term)
+            item.details?.toLowerCase().includes(term) || // Busca en el nombre de la categoría
+            item.gender?.toLowerCase().includes(term)
         );
-        console.log("filtered:", filtered);
         setFilteredData(filtered);
     };
 
     /////////// MODAL DE EDICION ///////////
     const openEditModal = (record) => {
-        setSelectedEquipo(record);
+        setSelectedCategory(record);
         console.log('recordsss', record);
         updateForm.setFieldsValue(record); // Carga los datos en el formulario de update
         setIsUpdateModalVisible(true);
     };
 
     useEffect(() => {
-        ChampionshipList();
+        categoryList();
     }, []);
 
 
     const columns = [
         {
-            title: 'Torneo',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Categoría',
+            dataIndex: 'details',
+            key: 'details',
         },
         {
-            title: 'Tipo',
-            dataIndex: 'type',
-            key: 'type',
+            title: 'Género',
+            dataIndex: 'gender',
+            key: 'gender',
             render: (type) => {
                 const typeConfig = {
                     'unique': { label: 'Único' },
@@ -139,33 +136,14 @@ const ChampionshipPage = () => {
             },
         },
         {
-            title: 'Fecha de Inicio',
-            dataIndex: 'start_date',
-            key: 'start_date',
-            render: (text) => <Tag color="blue">{text}</Tag>
-        },
-        {
-            title: 'Fecha de Finalización',
-            dataIndex: 'end_date',
-            key: 'end_date',
-            render: (text) => <Tag color="red">{text}</Tag>
-        },
-        {
             title: 'Estado',
-            dataIndex: 'status_championship',
-            key: 'status_championship',
+            dataIndex: 'status',
+            key: 'status',
             render: (status) => {
-                // 1. Definimos un mapeo de configuraciones según el código de la BD
-                const statusConfig = {
-                    'PE': { color: 'orange', texto: 'PENDIENTE' },
-                    'AC': { color: 'success', texto: 'ACTIVO' },
-                    'FI': { color: 'blue', texto: 'FINALIZADO' },
-                    'CA': { color: 'error', texto: 'CANCELADO' }
-                };
-                // 2. Obtenemos la configuración actual o una por defecto si el código no existe
-                const { color, texto } = statusConfig[status] || { color: 'default', texto: 'DESCONOCIDO' };
+                const color = status === 'V' ? 'success' : 'error';
+                const texto = status === 'V' ? 'ACTIVO' : 'INACTIVO';
                 return (
-                    <Tag color={color} style={{ fontWeight: '600', borderRadius: '4px', minWidth: '90px', textAlign: 'center' }}>
+                    <Tag color={color} style={{ fontWeight: '600', borderRadius: '4px' }}>
                         {texto}
                     </Tag>
                 );
@@ -180,7 +158,7 @@ const ChampionshipPage = () => {
                         <Button type="text" icon={<Edit size={16} />} onClick={() => openEditModal(record)} />
                     </Tooltip>
                     <Tooltip title="Eliminar">
-                        <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => dataRowDelete(record.equipo_id)} />
+                        <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => dataRowDelete(record.championship_id)} />
                     </Tooltip>
                 </Space>
             ),
@@ -192,9 +170,9 @@ const ChampionshipPage = () => {
             {/* Encabezado Responsivo */}
             <div className="page-header-container">
                 <div className="header-text">
-                    <h1 className="page-title">Gestión de Torneos</h1>
+                    <h1 className="page-title">Gestión de Categorías</h1>
                     <p className="page-subtitle">
-                        Listado oficial de torneos activos en la Liga Divino Niño.
+                        Listado oficial de categorías activas en la Liga Divino Niño.
                     </p>
                 </div>
 
@@ -212,7 +190,7 @@ const ChampionshipPage = () => {
                         icon={<Plus size={18} />}
                         onClick={() => setIsCreateModalVisible(true)}
                     >
-                        Nuevo Torneo
+                        Nueva Categoría
                     </Button>
                 </div>
             </div>
@@ -234,7 +212,7 @@ const ChampionshipPage = () => {
 
             {/* --- MODAL DE CREACIÓN --- */}
             <Modal
-                title="Añadir Nuevo Torneo"
+                title="Añadir Nueva Categoría"
                 open={isCreateModalVisible}
                 onOk={() => createForm.submit()}
                 onCancel={() => setIsCreateModalVisible(false)}
@@ -243,32 +221,35 @@ const ChampionshipPage = () => {
             >
                 <Form form={createForm} layout="vertical" onFinish={dataRowCreate}>
                     <Form.Item
-                        name="name"
-                        label="Nombre del Campeonato"
+                        name="details"
+                        label="Nombre de la categoría"
                         rules={[{ required: true, message: 'Por favor ingrese el nombre' }]}
                     >
-                        <Input placeholder="Ej: Copa de Verano 2026" />
+                        <Input placeholder="Ej: Senior" />
                     </Form.Item>
                     <Form.Item
-                        name="type"
-                        label="Tipo de Torneo"
-                        rules={[{ required: true, message: 'Seleccione un tipo' }]}
+                        name="gender"
+                        label="Género"
+                        rules={[{ required: true, message: 'Seleccione una opción' }]}
                     >
                         <Select
-                            placeholder="Seleccione el tipo de torneo"
+                            placeholder="Seleccione una opción"
                             allowClear
                             showSearch
                             style={{ width: '100%' }} // Cambiado a 100% para que se vea bien en el modal
                             options={[
-                                { value: 'unico', label: 'Torneo Único' },
-                                { value: 'categorias', label: 'Por Categorías' },
-                                // { value: 'especial', label: 'Invitacional (Especial)' },
-                                // { value: 'disabled', label: 'Próximamente', disabled: true },
+                                { value: 'M', label: 'Masculino' },
+                                { value: 'F', label: 'Femenino' },
                             ]}
-                            // Si quieres usar el prefijo visual como en tu ejemplo:
-                            suffixIcon={<Trophy size={14} />}
                         />
-
+                    </Form.Item>
+                    <Form.Item name="description" label="Descripción" >
+                        <TextArea
+                            rows={4}
+                            placeholder="Escriba los detalles de la categoria aquí..."
+                            showCount
+                            maxLength={500}
+                        />
                     </Form.Item>
                 </Form>
             </Modal>
@@ -282,16 +263,30 @@ const ChampionshipPage = () => {
                 okText="Actualizar"
             >
                 <Form form={updateForm} layout="vertical" onFinish={dataRowUpdate}>
-                    <Form.Item name="nombre_completo" label="Nombre Completo" rules={[{ required: true }]}>
+                    <Form.Item name="details" label="Nombre Categoria" rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item name="nombre_corto" label="Nombre Corto">
-                        <Input />
+                    <Form.Item name="gender" label="Género" rules={[{ required: true }]}>
+                        <Select
+                            placeholder="Seleccione una opción"
+                            allowClear
+                            showSearch
+                            style={{ width: '100%' }} // Cambiado a 100% para que se vea bien en el modal
+                            options={[
+                                { value: 'M', label: 'Masculino' },
+                                { value: 'F', label: 'Femenino' },
+                            ]}
+                        />
                     </Form.Item>
-                    <Form.Item name="abrebiatura" label="Abreviatura" rules={[{ required: true }]}>
-                        <Input maxLength={3} />
+                    <Form.Item name="description" label="Descripción" >
+                        <TextArea
+                            rows={4}
+                            placeholder="Escriba los detalles de la categoria aquí..."
+                            showCount
+                            maxLength={500}
+                        />
                     </Form.Item>
-                    <Form.Item name="estado_campeonato" label="Estado">
+                    <Form.Item name="status" label="Estado">
                         <Select options={[{ value: 'A', label: 'ACTIVO' }, { value: 'I', label: 'INACTIVO' }]} />
                     </Form.Item>
                 </Form>
@@ -300,4 +295,4 @@ const ChampionshipPage = () => {
     );
 };
 
-export default ChampionshipPage;
+export default CategoryPage;

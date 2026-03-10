@@ -9,17 +9,20 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const [isEquiposOpen, setIsEquiposOpen] = useState(location.pathname.includes("equipos"));
   const [isVocaliaOpen, setIsVocaliaOpen] = useState(location.pathname.includes("vocalias"));
   const [isChampionshipOpen, setIsChampionshipOpen] = useState(location.pathname.includes("championship"));
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(location.pathname.includes("categorias"));
 
   useEffect(() => {
     const isInEquiposRoute = location.pathname.includes("equipos");
     const isInVocaliaRoute = location.pathname.includes("vocalias");
     const isInChampionshipRoute = location.pathname.includes("championship");
+    const isInCategoriesRoute = location.pathname.includes("categorias");
 
     // Si salimos de una ruta, cerramos su submenú (Lógica asíncrona para evitar errores de renderizado)
     const timer = setTimeout(() => {
       if (!isInEquiposRoute) setIsEquiposOpen(false);
       if (!isInVocaliaRoute) setIsVocaliaOpen(false);
       if (!isInChampionshipRoute) setIsChampionshipOpen(false);
+      if (!isInCategoriesRoute) setIsCategoriesOpen(false);
     }, 0);
 
     // Lógica para móviles: cerrar sidebar al navegar
@@ -34,6 +37,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const isParentActiveEquipos = location.pathname.includes("equipos") || isEquiposOpen;
   const isParentActiveVocalia = location.pathname.includes("vocalias") || isVocaliaOpen;
   const isParentActiveChampionship = location.pathname.includes("championship") || isChampionshipOpen;
+  const isParentActiveCategories = location.pathname.includes("categorias") || isCategoriesOpen;
 
   return (
     <>
@@ -156,6 +160,41 @@ function Sidebar({ isOpen, toggleSidebar }) {
               </NavLink>
             </div>
           </div>
+
+          {/* ITEM CON SUBMENÚ CATEGORIAS */}
+          <div className="sidebar-dropdown">
+            <button
+              type="button"
+              className={`sidebar-link ${isParentActiveCategories ? "active" : ""}`}
+              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+              style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+            >
+              <div className="link-content">
+                <List size={20} />
+                <span>Categorias</span>
+              </div>
+              {isCategoriesOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+
+            <div className={`submenu-container ${isCategoriesOpen ? "expanded" : ""}`}>
+              <NavLink
+                to="/admin/categorias/categorias-activas"
+                className={({ isActive }) => isActive ? "sidebar-sublink active" : "sidebar-sublink"}
+              >
+                <List size={16} />
+                <span>Lista Activa</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/categorias/categorias-activas"
+                className={({ isActive }) => isActive ? "sidebar-sublink active" : "sidebar-sublink"}
+              >
+                <History size={16} />
+                <span>Lista Histórica</span>
+              </NavLink>
+            </div>
+          </div>
+
         </nav>
       </aside>
     </>

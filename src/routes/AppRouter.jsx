@@ -13,6 +13,7 @@ import VocaliaPage from "../pages/admin/vacalia/vocaliaPage";
 import VocaliaHistoricoPage from "../pages/admin/vacalia/VocaliaHistorico";
 import TournamentCreatePage from "../pages/admin/championship/TournamentCreatePage";
 import ChampionshipPage from "../pages/admin/championship/ChampionshipPage";
+import CategoryPage from "../pages/admin/categories/categoryPage";
 
 // Componente para proteger rutas
 const ProtectedRoute = ({ children }) => {
@@ -50,6 +51,10 @@ const AppRouter = () => {
                     <Route path="vocalias" >
                         <Route path="lista" element={<VocaliaPage />} />
                         <Route path="historico" element={<VocaliaHistoricoPage />} />
+                    </Route>
+                    <Route path = "categorias">
+                        <Route path="categorias-activas" element={<CategoryPage />} />
+                        <Route path="categorias-activas" element={<CategoryPage />} />
                     </Route>
                 </Route>
             </Routes>

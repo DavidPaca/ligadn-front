@@ -185,7 +185,7 @@ function VocaliaPage() {
                         icon={<Plus size={18} />}
                         onClick={() => setIsCreateModalVisible(true)}
                     >
-                        Nuevo Equipo
+                        Nueva Vocalía
                     </Button>
                 </div>
             </div>
