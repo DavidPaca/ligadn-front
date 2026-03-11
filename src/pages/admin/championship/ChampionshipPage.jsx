@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 // Se agregó Trophy a los imports
 import { Table, Button, Space, Tooltip, Tag, Typography, Input, Form, Modal, Select } from "antd";
-import { Edit, Trash2, Plus, Trophy } from "lucide-react";
+import { Edit, Trash2, Plus, Trophy, Settings, Layers } from "lucide-react";
+import { useNavigate } from "react-router-dom"; // Importar para la navegación
 import { getChampionshipAC, createChampionship, updateChampionship, deleteChampionship } from "../../../services/ChampionshipService";
 import Swal from "sweetalert2";
 
@@ -9,6 +10,7 @@ const { Text } = Typography;
 const { Search } = Input;
 
 const ChampionshipPage = () => {
+    const navigate = useNavigate(); // Inicializar el hook
     const [dataList, setDataList] = useState([]); // Datos que se muestran (filtrados)
     const [filteredData, setFilteredData] = useState([]); // Datos que se muestran (filtrados)
     const [isLoading, setIsLoading] = useState(true);
@@ -176,11 +178,25 @@ const ChampionshipPage = () => {
             key: 'acciones',
             render: (_, record) => (
                 <Space size="middle">
+                    {/* ICONO DE REDIRECCIÓN CONDICIONAL */}
+                    {record.type === 'categories' && (
+                        <Tooltip title="Configurar Categorías y Fases">
+                            <Button
+                                type="text"
+                                style={{ color: '#1890ff' }}
+                                // icon={<Settings size={16} />}
+                                icon={<Layers size={16} />}
+                                onClick={() => navigate(`/admin/torneos/torneos-categorias/${record.championship_id}/setup`)}
+                            />
+                        </Tooltip>
+                    )}
+
                     <Tooltip title="Editar">
                         <Button type="text" icon={<Edit size={16} />} onClick={() => openEditModal(record)} />
                     </Tooltip>
+
                     <Tooltip title="Eliminar">
-                        <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => dataRowDelete(record.equipo_id)} />
+                        <Button type="text" danger icon={<Trash2 size={16} />} onClick={() => dataRowDelete(record.championship_id)} />
                     </Tooltip>
                 </Space>
             ),

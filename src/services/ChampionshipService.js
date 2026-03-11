@@ -21,6 +21,16 @@ const getChampionshipAC = async () => {
     }
 };
 
+const getChampionshipACById = async (championship_id) => {
+    try {
+        const response = await apiRest.get(`/championship-unique/${championship_id}`);  ///championship-unique/{championship_id}
+        return response.data;
+    } catch (error) {
+        console.error("Error al obtener campeonatos:", error);
+        throw error;
+    }
+};
+
 const createChampionship = async (data) => {
     try {
         // Laravel devuelve la data en response.data
@@ -54,4 +64,4 @@ const deleteChampionship = async (championship_id) => {
     }
 };
 
-export {getChampionship, createChampionship, updateChampionship, deleteChampionship, getChampionshipAC};
+export {getChampionship, createChampionship, updateChampionship, deleteChampionship, getChampionshipAC, getChampionshipACById};

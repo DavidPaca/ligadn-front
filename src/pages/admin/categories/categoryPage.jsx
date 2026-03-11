@@ -119,15 +119,30 @@ const CategoryPage = () => {
             dataIndex: 'details',
             key: 'details',
         },
+        // {
+        //     title: 'Género',
+        //     dataIndex: 'gender',
+        //     key: 'gender',
+        //     render: (type) => {
+        //         const typeConfig = {
+        //             'unique': { label: 'Único' },
+        //             'categories': { label: 'Por Categorías' },
+        //             'especial': { label: 'Invitacional' }
+        //         };
+        //         const { label } = typeConfig[type] || { label: type };
+        //         return (
+        //             <Text> {label}</Text>
+        //         );
+        //     },
+        // },
         {
             title: 'Género',
             dataIndex: 'gender',
             key: 'gender',
             render: (type) => {
                 const typeConfig = {
-                    'unique': { label: 'Único' },
-                    'categories': { label: 'Por Categorías' },
-                    'especial': { label: 'Invitacional' }
+                    'M': { label: 'Masculino' },
+                    'F': { label: 'Femenino' }
                 };
                 const { label } = typeConfig[type] || { label: type };
                 return (
@@ -141,7 +156,7 @@ const CategoryPage = () => {
             key: 'status',
             render: (status) => {
                 const color = status === 'V' ? 'success' : 'error';
-                const texto = status === 'V' ? 'ACTIVO' : 'INACTIVO';
+                const texto = status === 'V' ? 'Vigente' : 'Eliminado';
                 return (
                     <Tag color={color} style={{ fontWeight: '600', borderRadius: '4px' }}>
                         {texto}
@@ -287,7 +302,7 @@ const CategoryPage = () => {
                         />
                     </Form.Item>
                     <Form.Item name="status" label="Estado">
-                        <Select options={[{ value: 'A', label: 'ACTIVO' }, { value: 'I', label: 'INACTIVO' }]} />
+                        <Select options={[{ value: 'V', label: 'Vigente' }, { value: 'E', label: 'Eliminado' }]} />
                     </Form.Item>
                 </Form>
             </Modal>
