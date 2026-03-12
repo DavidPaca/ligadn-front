@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import { getCategories } from "../../../services/CategoriesService";
 import { getTournamentPhasesAll } from "../../../services/TournamentPhasesService";
 import { getChampionshipACById } from "../../../services/ChampionshipService";
+import { getChampionshipCategoriesByID } from "../../../services/ChampionshipCategoriesService";
+
 
 const { Title } = Typography;
 
@@ -20,6 +22,7 @@ const ChampionshipSetupPage = () => {
     const [phases, setPhases] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [championshipName, setChampionshipName] = useState("");
+    const [championshipCategories, setChampionshipCategories] = useState([]);
 
     //////////// CATEGORIAS LISTAR ////////////
     const CategoriesList = async () => {
@@ -84,6 +87,25 @@ const ChampionshipSetupPage = () => {
         }
     };
 
+    /////////// CHAMPIONSHIP-CATEGORIES LISTAR ///////////
+    const ChampionshipCategoriesList = async () => {
+        try {
+            setIsLoading(true);
+            const response = await getChampionshipCategoriesByID(id);
+            console.log("response CHAMPIONSHIP-Categorias:", response);
+            const dataWithKeys = response.map(item => ({
+                ...item,
+                key: item.championship_category_id
+            }));
+            setChampionshipCategories(dataWithKeys);
+            setIsLoading(false);
+        } catch {
+            Swal.fire("Error", "No se pudieron cargar las categorías", "error");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const onFinish = (values) => {
         // Aquí iría tu servicio para guardar en la BD
         const newEntry = {
@@ -105,10 +127,25 @@ const ChampionshipSetupPage = () => {
     useEffect(() => {
         ChampionshipList();
     }, []);
+    useEffect(() => {
+        ChampionshipCategoriesList();
+    }, []);
 
     const columns = [
-        { title: 'Categoría', dataIndex: 'categoria', key: 'categoria' },
-        { title: 'Fase de campeonato', dataIndex: 'fase', key: 'fase' },
+        { title: 'Categoría', dataIndex: 'category_details', key: 'category_details' },
+        {
+            title: 'Fase de campeonato',
+            dataIndex: 'game_system',
+            key: 'game_system',
+            render: (text) => {
+                const systems = {
+                    'league': '(Todos contra todos)',
+                    'playoffs': 'Playoffs (Eliminatorias)',
+                    'mixed': 'Mixed (Todos contra todos + Eliminatorias)'
+                };
+                return systems[text] || text;
+            }
+        },
         {
             title: 'Acciones',
             key: 'acciones',
@@ -199,7 +236,7 @@ const ChampionshipSetupPage = () => {
                 </Form>
 
                 <Table
-                    dataSource={dataSource}
+                    dataSource={championshipCategories}
                     columns={columns}
                     style={{ marginTop: 24 }}
                     locale={{ emptyText: 'No hay configuraciones guardadas' }}
