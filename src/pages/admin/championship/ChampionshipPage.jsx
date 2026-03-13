@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 // Se agregó Trophy a los imports
-import { Table, Button, Space, Tooltip, Tag, Typography, Input, Form, Modal, Select } from "antd";
+import { Table, Button, Space, Tooltip, Tag, Typography, Input, Form, Modal, Select, DatePicker, Row, Col,  } from "antd";
 import { Edit, Trash2, Plus, Trophy, Settings, Layers } from "lucide-react";
 import { useNavigate } from "react-router-dom"; // Importar para la navegación
 import { getChampionshipAC, createChampionship, updateChampionship, deleteChampionship } from "../../../services/ChampionshipService";
 import Swal from "sweetalert2";
 
 const { Text } = Typography;
-const { Search } = Input;
+const { Search, TextArea } = Input;
 
 const ChampionshipPage = () => {
     const navigate = useNavigate(); // Inicializar el hook
@@ -46,13 +46,24 @@ const ChampionshipPage = () => {
     ///////// INSERTAR EQUIPO ///////////
     const dataRowCreate = async (values) => {
         try {
-            await createChampionship(values);
+            // Formateamos los valores antes de enviarlos
+            const dataParaEnviar = {
+                ...values,
+                // IMPORTANTE: Convertir a string que entienda MySQL/Laravel
+                start_date: values.start_date ? values.start_date.format('YYYY-MM-DD') : null,
+                end_date: values.end_date ? values.end_date.format('YYYY-MM-DD') : null,
+            };
+            console.log("Datos enviados al backend ACT:", dataParaEnviar);
+            await createChampionship(dataParaEnviar);
             Swal.fire("¡Éxito!", "Equipo creado correctamente", "success");
             setIsCreateModalVisible(false);
             createForm.resetFields();
-            ChampionshipList();
+
         } catch {
             console.error("No se pudo crear el equipo");
+        } finally {
+            ChampionshipList();
+            setIsLoading(false);
         }
     };
 
@@ -276,15 +287,34 @@ const ChampionshipPage = () => {
                             showSearch
                             style={{ width: '100%' }} // Cambiado a 100% para que se vea bien en el modal
                             options={[
-                                { value: 'unico', label: 'Torneo Único' },
-                                { value: 'categorias', label: 'Por Categorías' },
+                                { value: 'unique', label: 'Torneo Único' },
+                                { value: 'categories', label: 'Por Categorías' },
                                 // { value: 'especial', label: 'Invitacional (Especial)' },
                                 // { value: 'disabled', label: 'Próximamente', disabled: true },
                             ]}
                             // Si quieres usar el prefijo visual como en tu ejemplo:
                             suffixIcon={<Trophy size={14} />}
                         />
-
+                    </Form.Item>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item name="start_date" label="Fecha de Inicio">
+                                <DatePicker style={{ width: '100%' }} placeholder="Inicio" />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item name="end_date" label="Fecha de Finalización">
+                                <DatePicker style={{ width: '100%' }} placeholder="Fin" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Form.Item name="description" label="Descripción" >
+                        <TextArea
+                            rows={4}
+                            placeholder="Escriba los detalles de la vocalía aquí..."
+                            showCount
+                            maxLength={500}
+                        />
                     </Form.Item>
                 </Form>
             </Modal>
@@ -312,7 +342,7 @@ const ChampionshipPage = () => {
                     </Form.Item>
                 </Form>
             </Modal>
-        </div>
+        </div >
     );
 };
 

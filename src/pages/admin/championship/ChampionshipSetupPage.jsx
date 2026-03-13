@@ -132,14 +132,23 @@ const ChampionshipSetupPage = () => {
     }, []);
 
     const columns = [
-        { title: 'Categoría', dataIndex: 'category_details', key: 'category_details' },
+        {
+            title: 'Categoría',
+            render: (_, record) => {
+                const genderLabel = record.gender === 'M' ? 'Masculino' :
+                    record.gender === 'F' ? 'Femenino' :
+                        record.gender;
+                return `${record.details} - ${genderLabel}`;
+            },
+            key: 'category_gender_combined'
+        },
         {
             title: 'Fase de campeonato',
             dataIndex: 'game_system',
             key: 'game_system',
             render: (text) => {
                 const systems = {
-                    'league': '(Todos contra todos)',
+                    'league': 'League (Todos contra todos)',
                     'playoffs': 'Playoffs (Eliminatorias)',
                     'mixed': 'Mixed (Todos contra todos + Eliminatorias)'
                 };

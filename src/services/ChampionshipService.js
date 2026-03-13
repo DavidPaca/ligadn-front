@@ -33,8 +33,10 @@ const getChampionshipACById = async (championship_id) => {
 
 const createChampionship = async (data) => {
     try {
-        // Laravel devuelve la data en response.data
+       
         const response = await apiRest.post('/championship-create', data);
+        console.log("response CHAMPION SHIP SERVICE:", response);
+        alert("SERVICO");
         return response.data;
     } catch (error) {
         console.error("Error al crear campeonato:", error);
