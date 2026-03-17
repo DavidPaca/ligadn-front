@@ -23,6 +23,7 @@ const ChampionshipSetupPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [championshipName, setChampionshipName] = useState("");
     const [championshipCategories, setChampionshipCategories] = useState([]);
+    const [selectedCategoryID, setSelectedCategoryID] = useState(null);
 
     //////////// CATEGORIAS LISTAR ////////////
     const CategoriesList = async () => {
@@ -91,16 +92,19 @@ const ChampionshipSetupPage = () => {
     const ChampionshipCategoriesList = async () => {
         try {
             setIsLoading(true);
-            const response = await getChampionshipCategoriesByID(id);
-            console.log("response CHAMPIONSHIP-Categorias:", response);
+            // Enviamos el ID del campeonato. 
+            // Si 'selectedCategoryID' es null, el backend debería retornar todas las del torneo.
+            console.log("ID del campeonato:", id);
+            console.log("ID de la categoría seleccionada:", selectedCategoryID);
+            const response = await getChampionshipCategoriesByID(id, selectedCategoryID);
+
             const dataWithKeys = response.map(item => ({
-                ...item,
+                ...item,                              // ← aquí se copia category_id
                 key: item.championship_category_id
             }));
-            setChampionshipCategories(dataWithKeys);
-            setIsLoading(false);
-        } catch {
-            Swal.fire("Error", "No se pudieron cargar las categorías", "error");
+            setChampionshipCategories(dataWithKeys); // ← cada record tiene category_id
+        } catch (error) {
+            console.error("Error cargando categorías del campeonato:", error);
         } finally {
             setIsLoading(false);
         }
@@ -135,6 +139,12 @@ const ChampionshipSetupPage = () => {
         {
             title: 'Categoría',
             render: (_, record) => {
+                const currentCategoryId = categories.find(
+                    cat => cat.category_id === record.category_id
+                );
+                setSelectedCategoryID(currentCategoryId);
+
+                console.log("ID de la categoría en esta fila:", currentCategoryId);
                 const genderLabel = record.gender === 'M' ? 'Masculino' :
                     record.gender === 'F' ? 'Femenino' :
                         record.gender;

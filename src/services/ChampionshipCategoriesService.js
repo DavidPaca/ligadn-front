@@ -1,9 +1,11 @@
 import apiRest from './ApiRest';
 
-const getChampionshipCategoriesByID = async (championship_category_id) => {
+
+const getChampionshipCategoriesByID = async (championship_id, category_id) => {
     try {
         // Laravel devuelve la data en response.data
-        const response = await apiRest.get('/championship-category/' + championship_category_id);
+        // const response = await apiRest.get('/championship-category/' + championship_category_id + '/' + championship_category_id);
+        const response = await apiRest.get(`/championship-category/${championship_id}/${category_id}`);
         return response.data;
     } catch (error) {
         console.error("Error al obtener categorías:", error);
