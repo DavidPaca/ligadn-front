@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Space, Tooltip, Select, Form, Card, Typography } from "antd";
-import { Edit, Trash2, Save, ArrowLeft } from "lucide-react";
+import { Edit, Trash2, Save, ArrowLeft, Layers } from "lucide-react";   
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -8,7 +8,7 @@ import { getCategories } from "../../../services/CategoriesService";
 import { getTournamentPhasesAll } from "../../../services/TournamentPhasesService";
 import { getChampionshipACById } from "../../../services/ChampionshipService";
 import { getChampionshipCategoriesByID } from "../../../services/ChampionshipCategoriesService";
-
+import { createChampionshipCategory, deleteChampionshipCategory } from "../../../services/ChampionshipCategoriesService";
 
 const { Title } = Typography;
 
@@ -16,7 +16,7 @@ const ChampionshipSetupPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const [dataSource, setDataSource] = useState([]);
+    // const [dataSource, setDataSource] = useState([]);
     // --- ESTADOS PARA LA DATA DE LOS SERVICIOS ---
     const [categories, setCategories] = useState([]);
     const [phases, setPhases] = useState([]);
@@ -24,6 +24,10 @@ const ChampionshipSetupPage = () => {
     const [championshipName, setChampionshipName] = useState("");
     const [championshipCategories, setChampionshipCategories] = useState([]);
     const [selectedCategoryID, setSelectedCategoryID] = useState(null);
+    // const [championshipCategoryID, setChampionshipCategoryID] = useState(null);
+    // const [championshipCategoriesID setChampionshipCategoriesID] = useState();
+    // const [championshipoCategoryID, setChampionshipoCategoryID] = useState(null);
+    
 
     //////////// CATEGORIAS LISTAR ////////////
     const CategoriesList = async () => {
@@ -96,13 +100,15 @@ const ChampionshipSetupPage = () => {
             // Si 'selectedCategoryID' es null, el backend debería retornar todas las del torneo.
             console.log("ID del campeonato:", id);
             console.log("ID de la categoría seleccionada:", selectedCategoryID);
-            const response = await getChampionshipCategoriesByID(id, selectedCategoryID);
+            // const response = await getChampionshipCategoriesByID(id, selectedCategoryID);
+            const response = await getChampionshipCategoriesByID(id);
 
             const dataWithKeys = response.map(item => ({
                 ...item,                              // ← aquí se copia category_id
                 key: item.championship_category_id
             }));
             setChampionshipCategories(dataWithKeys); // ← cada record tiene category_id
+            setSelectedCategoryID(null);
         } catch (error) {
             console.error("Error cargando categorías del campeonato:", error);
         } finally {
@@ -110,16 +116,70 @@ const ChampionshipSetupPage = () => {
         }
     };
 
-    const onFinish = (values) => {
-        // Aquí iría tu servicio para guardar en la BD
-        const newEntry = {
-            key: Date.now(),
-            categoria: values.categoria,
-            fase: values.fase
-        };
-        setDataSource([...dataSource, newEntry]);
-        form.resetFields();
-        Swal.fire("Guardado", "Configuración añadida a la tabla", "success");
+    ///////////  CHAMPIONSHIP-CATEGORIES  INSERTAR ///////////
+    const dataRowCreate = async (values) => {
+        try {
+            setIsLoading(true);
+
+            // Estructuramos la data para el servicio createChampionshipCategory
+            const dataToSave = {
+                championship_id: id,            // Importante: viene de useParams
+                category_id: values.categoria,  // Viene del Select
+                tournament_phase_id: values.fase, // Viene del Select
+                start_date: null,               // Opcionales según tu form actual
+                end_date: null
+            };
+            console.log("Enviando a createChampionshipCategory:", dataToSave);
+            await createChampionshipCategory(dataToSave);
+            Swal.fire("¡Éxito!", "Categoría configurada correctamente", "success");
+            form.resetFields(); // Limpiar selectores
+            ChampionshipCategoriesList(); // Recargar la tabla
+
+        } catch (error) {
+            console.error("No se pudo crear la categoría:", error);
+            Swal.fire("Error", "No se pudo guardar la configuración", "error");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    /////////// ACTUALIZAR CHAMPIONSHIP-CATEGORIES ///////////
+    // const dataRowUpdate = async (values) => {
+    //     try {
+    //         // await updateChampionshipCategory(selectedCategoryID, values);
+    //         Swal.fire("¡Éxito!", "Categoría actualizada correctamente", "success");
+    //         setIsUpdateModalVisible(false);
+    //         updateForm.resetFields();
+    //         ChampionshipCategoriesList();
+    //     } catch {
+    //         console.error("No se pudo actualizar la categoría");
+    //     }
+    // };
+
+    /////////// ELIMINAR CHAMPIONSHIP-CATEGORIES ///////////
+    const dataRowDelete = async (championshipCategoryId) => {
+        const result = await Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Se eliminará esta categoría de la configuración del torneo",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        });
+
+        if (result.isConfirmed) {
+            try {
+                setIsLoading(true);
+                await deleteChampionshipCategory(championshipCategoryId);
+                Swal.fire("¡Eliminado!", "Registro borrado.", "success");
+                ChampionshipCategoriesList();
+            } catch {
+                Swal.fire("Error", "No se pudo eliminar", "error");
+            } finally {
+                setIsLoading(false);
+            }
+        }
     };
 
     useEffect(() => {
@@ -135,34 +195,33 @@ const ChampionshipSetupPage = () => {
         ChampionshipCategoriesList();
     }, []);
 
+    // /////////// COLUMNAS CORREGIDAS ///////////
     const columns = [
         {
             title: 'Categoría',
+            key: 'category_details',
             render: (_, record) => {
-                const currentCategoryId = categories.find(
-                    cat => cat.category_id === record.category_id
-                );
-                setSelectedCategoryID(currentCategoryId);
+                // Si el backend ya trae 'details' y 'gender' en 'record', úsalos directamente
+                // Si no, búscalo en la lista de categories cargada
+                const catInfo = categories.find(c => c.category_id === record.category_id);
+                const details = record.details || catInfo?.details || "Cargando...";
+                const gender = record.gender || catInfo?.gender;
 
-                console.log("ID de la categoría en esta fila:", currentCategoryId);
-                const genderLabel = record.gender === 'M' ? 'Masculino' :
-                    record.gender === 'F' ? 'Femenino' :
-                        record.gender;
-                return `${record.details} - ${genderLabel}`;
+                const genderLabel = gender === 'M' ? 'Masculino' :
+                    gender === 'F' ? 'Femenino' : gender;
+
+                return `${details} - ${genderLabel}`;
             },
-            key: 'category_gender_combined'
         },
         {
             title: 'Fase de campeonato',
-            dataIndex: 'game_system',
-            key: 'game_system',
-            render: (text) => {
-                const systems = {
-                    'league': 'League (Todos contra todos)',
-                    'playoffs': 'Playoffs (Eliminatorias)',
-                    'mixed': 'Mixed (Todos contra todos + Eliminatorias)'
-                };
-                return systems[text] || text;
+            dataIndex: 'phase_details', // Ajusta según el campo que devuelva tu GET
+            key: 'tournament_phase_id',
+            render: (text, record) => {
+                // Si el backend no devuelve el nombre de la fase, búscalo por ID
+                if (text) return text;
+                const phaseInfo = phases.find(p => p.tournament_phase_id === record.tournament_phase_id);
+                return phaseInfo?.tournament_phase_id || "Sin definir";
             }
         },
         {
@@ -170,13 +229,26 @@ const ChampionshipSetupPage = () => {
             key: 'acciones',
             render: (_, record) => (
                 <Space size="middle">
-                    <Tooltip title="Editar"><Button type="text" icon={<Edit size={16} />} /></Tooltip>
-                    <Tooltip title="Borrar">
+                    <Tooltip title="Configurar Clasificacion y Rankings">
+                        <Button
+                            type="text"
+                            style={{ color: '#1890ff' }}
+                            icon={<Layers size={16} />}                           
+                        />
+                    </Tooltip>
+                    <Tooltip title="Editar">    
+                        <Button
+                            type="text"
+                            icon={<Edit size={16} />}                           
+                        />
+                    </Tooltip>
+                    <Tooltip title="Eliminar">
                         <Button
                             type="text"
                             danger
                             icon={<Trash2 size={16} />}
-                            onClick={() => setDataSource(dataSource.filter(item => item.key !== record.key))}
+                            onClick={() => dataRowDelete(record.championship_category_id)}
+                            setChampionshipoCategoryID={record.championship_category_id}
                         />
                     </Tooltip>
                 </Space>
@@ -200,12 +272,12 @@ const ChampionshipSetupPage = () => {
                             Configuración de:
                         </Title>
                         <Title level={4} style={{ margin: 0, color: '#1890ff', fontWeight: 600 }}>
-                            {championshipName || "Cargando..."}
+                            {championshipName || "Cargando..."} : {id}
                         </Title>
                     </div>
                 }
             >
-                <Form form={form} layout="vertical" onFinish={onFinish} loading={isLoading}>
+                <Form form={form} layout="vertical" onFinish={dataRowCreate} loading={isLoading}>
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-end' }}>
                         <Form.Item
                             name="categoria"
@@ -247,7 +319,7 @@ const ChampionshipSetupPage = () => {
                         </Form.Item>
 
                         <Form.Item>
-                            <Button type="primary" htmlType="submit" icon={<Save size={18} />}>
+                            <Button type="primary" htmlType="submit" icon={<Save size={18} />} style={{ marginRight: 16 }}>
                                 Guardar
                             </Button>
                         </Form.Item>
