@@ -56,7 +56,7 @@ const ChampionshipSetupPage = () => {
             console.log("response FASes:", response);
             const dataWithKeys = response.map(item => ({
                 ...item,
-                key: item.tournament_phase_id
+                key: item.tournament_phases_id
             }));
             setPhases(dataWithKeys);
             setIsLoading(false);
@@ -122,10 +122,12 @@ const ChampionshipSetupPage = () => {
             setIsLoading(true);
 
             // Estructuramos la data para el servicio createChampionshipCategory
+            console.log("VALUES:",values);
+            console.log("Tournament Phases ID:",values.fase);   
             const dataToSave = {
                 championship_id: id,            // Importante: viene de useParams
                 category_id: values.categoria,  // Viene del Select
-                tournament_phase_id: values.fase, // Viene del Select
+                tournament_phases_id: values.fase, // Viene del Select
                 start_date: null,               // Opcionales según tu form actual
                 end_date: null
             };
@@ -291,6 +293,7 @@ const ChampionshipSetupPage = () => {
                                 // optionFilterProp="label"
                                 // IMPORTANTE: Asegúrate de que el mapeo devuelva un objeto limpio
                                 options={categories.map(category => {
+                                    console.log("CATEGORY ID:",category.category_id);
                                     const genderLabel = category.gender === 'M' ? 'Masculino' :
                                         category.gender === 'F' ? 'Femenino' :
                                             category.gender;
@@ -312,7 +315,7 @@ const ChampionshipSetupPage = () => {
                                 placeholder="Seleccione fase"
                                 showSearch
                                 options={phases.map(phase => ({
-                                    value: phase.tournament_phase_id || Math.random(),
+                                    value: phase.tournament_phases_id,
                                     label: phase.details || 'Fase sin nombre'
                                 }))}
                             />
