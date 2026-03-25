@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Table, Button, Space, Tooltip, Select, Form, Card, Typography } from "antd";
-import { Edit, Trash2, Save, ArrowLeft, Layers } from "lucide-react";   
+import { Table, Button, Space, Tooltip, Select, Form, Card, Typography, InputNumber } from "antd";
+import { Edit, Trash2, Save, ArrowLeft, Layers } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -27,7 +27,7 @@ const ChampionshipSetupPage = () => {
     // const [championshipCategoryID, setChampionshipCategoryID] = useState(null);
     // const [championshipCategoriesID setChampionshipCategoriesID] = useState();
     // const [championshipoCategoryID, setChampionshipoCategoryID] = useState(null);
-    
+
 
     //////////// CATEGORIAS LISTAR ////////////
     const CategoriesList = async () => {
@@ -122,12 +122,13 @@ const ChampionshipSetupPage = () => {
             setIsLoading(true);
 
             // Estructuramos la data para el servicio createChampionshipCategory
-            console.log("VALUES:",values);
-            console.log("Tournament Phases ID:",values.fase);   
+            console.log("VALUES:", values);
+            console.log("Tournament Phases ID:", values.fase);
             const dataToSave = {
                 championship_id: id,            // Importante: viene de useParams
                 category_id: values.categoria,  // Viene del Select
                 tournament_phases_id: values.fase, // Viene del Select
+                max_teams: values.max_teams,    // <--- NUEVO: Valor del InputNumber
                 start_date: null,               // Opcionales según tu form actual
                 end_date: null
             };
@@ -217,13 +218,27 @@ const ChampionshipSetupPage = () => {
         },
         {
             title: 'Fase de campeonato',
-            dataIndex: 'phase_details', // Ajusta según el campo que devuelva tu GET
+            dataIndex: 'tournament_phase_details', // Ajusta según el campo que devuelva tu GET
             key: 'tournament_phase_id',
             render: (text, record) => {
                 // Si el backend no devuelve el nombre de la fase, búscalo por ID
                 if (text) return text;
                 const phaseInfo = phases.find(p => p.tournament_phase_id === record.tournament_phase_id);
                 return phaseInfo?.tournament_phase_id || "Sin definir";
+            }
+        },
+        {
+            title: 'Número máximo de equipos',
+            dataIndex: 'max_teams',
+            key: 'max_teams',
+            render: (value) => {
+                // Validamos que exista un valor para evitar "Equipos undefined"
+                if (!value) return "0 equipos";
+
+                // Retornamos el número concatenado con la palabra
+                // Usamos una condicional simple para el plural/singular
+                const textoEquipo = value === 1 ? 'equipo' : 'equipos';
+                return `${value} ${textoEquipo}`;
             }
         },
         {
@@ -235,13 +250,13 @@ const ChampionshipSetupPage = () => {
                         <Button
                             type="text"
                             style={{ color: '#1890ff' }}
-                            icon={<Layers size={16} />}                           
+                            icon={<Layers size={16} />}
                         />
                     </Tooltip>
-                    <Tooltip title="Editar">    
+                    <Tooltip title="Editar">
                         <Button
                             type="text"
-                            icon={<Edit size={16} />}                           
+                            icon={<Edit size={16} />}
                         />
                     </Tooltip>
                     <Tooltip title="Eliminar">
@@ -293,7 +308,7 @@ const ChampionshipSetupPage = () => {
                                 // optionFilterProp="label"
                                 // IMPORTANTE: Asegúrate de que el mapeo devuelva un objeto limpio
                                 options={categories.map(category => {
-                                    console.log("CATEGORY ID:",category.category_id);
+                                    console.log("CATEGORY ID:", category.category_id);
                                     const genderLabel = category.gender === 'M' ? 'Masculino' :
                                         category.gender === 'F' ? 'Femenino' :
                                             category.gender;
@@ -318,6 +333,19 @@ const ChampionshipSetupPage = () => {
                                     value: phase.tournament_phases_id,
                                     label: phase.details || 'Fase sin nombre'
                                 }))}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="max_teams"
+                            label="Número máximo de equipos"
+                            rules={[{ required: true, message: 'Requerido' }]}
+                            style={{ flex: 1 }}
+                        >
+                            <InputNumber
+                                min={1}
+                                placeholder="Ej: 16"
+                                style={{ width: '100%' }}
                             />
                         </Form.Item>
 
