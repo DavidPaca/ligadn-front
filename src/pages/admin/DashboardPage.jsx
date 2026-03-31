@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Trophy, Users, Calendar, PlusCircle,
-    ArrowRight, Timer, CheckCircle2, AlertCircle
+    ArrowRight, Timer, CheckCircle2, AlertCircle,
+    icons
 } from 'lucide-react';
 import '../../styles/StylesAdmin.css';
 import TournamentCreatePage from './championship/TournamentCreatePage';
 import CreateTournamentModal from './modals/CreateTournamentModal';
+import { getEquipo } from '../../services/EquipoService';
+import { getChampionship, getChampionshipAC } from '../../services/ChampionshipService';
 import { Navigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
-const stats = [
-    { id: 1, title: 'Equipos Totales', value: '24', icon: <Users size={22} color="#fff" />, colorClass: 'stat-card__icon--blue' },
-    { id: 2, title: 'En Curso', value: '3', icon: <Timer size={22} color="#fff" />, colorClass: 'stat-card__icon--green' },
-    { id: 3, title: 'Finalizados', value: '12', icon: <CheckCircle2 size={22} color="#fff" />, colorClass: 'stat-card__icon--purple' },
-    { id: 4, title: 'Por Iniciar', value: '2', icon: <AlertCircle size={22} color="#fff" />, colorClass: 'stat-card__icon--orange' },
-];
+
 
 const tournaments = [
     { id: 101, name: 'Copa Invierno 2026', status: 'Activo', teams: 16, category: 'Senior', date: 'Ene - Mar' },
@@ -24,6 +23,131 @@ const tournaments = [
 function DashboardPage() {
     // const navigate = useNavigate(); // Inicializamos el navegador
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [dataListEquipos, setDataListEquipos] = useState([]); // Datos que se muestran (filtrados)
+    const [dataListChampionshipAC, setDataListChampionshipAC] = useState([]);
+    const [countFinalizados, setCountFinalizados] = useState(0);
+    const [countPendientes, setCountPendientes] = useState(0);
+    const [filteredData, setFilteredData] = useState([]); // Datos que se muestran (filtrados)
+    const [isLoading, setIsLoading] = useState(true);
+
+    /////////// LISTAR EQUIPOS ///////////
+    const EquiposList = async () => {
+        try {
+            setIsLoading(true);
+
+            const response = await getEquipo();
+            // console.log("NUEMOR DE EQUIPOS REGISTRADOS:", response)
+            setDataListEquipos(response || []);
+        }
+        catch {
+            Swal.fire("Error", "No se pudieron cargar los equipos", "error");
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
+
+    ///////////  CHAMPIONSHIP LIST AC ///////////  status_championship
+    const ChampionshipList = async () => {
+        try {
+            setIsLoading(true);
+            const response = await getChampionship();
+
+            if (response && Array.isArray(response)) {
+                // Filtrar y contar por status_championship
+                const finalizados = response.filter(t => t.status_championship === 'FI').length;
+                const pendientes = response.filter(t => t.status_championship === 'PE').length;
+
+                setCountFinalizados(finalizados);
+                setCountPendientes(pendientes);
+            }
+        }
+        catch {
+            Swal.fire("Error", "No se pudieron cargar los torneos", "error");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    ///////////  CHAMPIONSHIP LIST AC ///////////
+    const ChampionshipListAC = async () => {
+        try {
+            setIsLoading(true);
+            const response = await getChampionshipAC();
+            console.log("NUEMOR DE TORNEOS AC REGISTRADOS:", response)
+            setDataListChampionshipAC(response || []);
+        }
+        catch {
+            Swal.fire("Error", "No se pudieron cargar los torneos", "error");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    /////////// STATS ///////////
+    const stats = [
+        {
+            id: 1,
+            title: 'Equipos Totales',
+            // Convertimos el número 3 a string para el componente
+            value: dataListEquipos.length.toString(),
+            icon: <Users size={22} color="#fff" />,
+            colorClass: 'stat-card__icon--blue'
+        },
+        // { id: 2, title: 'En Curso', value: '3', icon: <Timer size={22} color="#fff" />, colorClass: 'stat-card__icon--green' },
+        {
+            id: 2,
+            title: 'En Curso',
+            value: dataListChampionshipAC.length.toString(),
+            icon: <Timer size={22} color="#fff" />,
+            colorClass: 'stat-card__icon--green'
+        },
+        // { id: 3, title: 'Finalizados', value: '12', icon: <CheckCircle2 size={22} color="#fff" />, colorClass: 'stat-card__icon--purple' },
+        // { id: 4, title: 'Por Iniciar', value: '2', icon: <AlertCircle size={22} color="#fff" />, colorClass: 'stat-card__icon--orange' },
+        {
+            id: 3,
+            title: 'Finalizados',
+            value: countFinalizados.toString(), // Valor real
+            icon: <CheckCircle2 size={22} color="#fff" />,
+            colorClass: 'stat-card__icon--purple'
+        },
+        {
+            id: 4,
+            title: 'Por Iniciar',
+            value: countPendientes.toString(), // Valor real
+            icon: <AlertCircle size={22} color="#fff" />,
+            colorClass: 'stat-card__icon--orange'
+        },
+    ];
+
+    // useEffect(() => {
+    //     EquiposList();
+    // }, [])
+
+    // useEffect(() => {
+    //     ChampionshipListAC();
+    // }, [])
+
+    // useEffect(() => {
+    //     ChampionshipList();
+    // }, [])
+
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            setIsLoading(true);
+            // Ejecuta todas las peticiones al mismo tiempo
+            await Promise.all([
+                EquiposList(),
+                ChampionshipListAC(),
+                ChampionshipList()
+            ]);
+            setIsLoading(false);
+        };
+        loadDashboardData();
+    }, []);
+
+
+
     return (
         <div className="dashboard-page">
 
@@ -56,7 +180,11 @@ function DashboardPage() {
                         </div>
                         <div>
                             <p className="stat-card__label">{item.title}</p>
-                            <h3 className="stat-card__value">{item.value}</h3>
+                            {isLoading ? (
+                                <div className="skeleton skeleton-value" style={{ width: '40px', height: '24px', marginTop: '5px' }}></div>
+                            ) : (
+                                <h3 className="stat-card__value">{item.value}</h3>
+                            )}
                         </div>
                     </div>
                 ))}
