@@ -15,6 +15,8 @@ import TournamentCreatePage from "../pages/admin/championship/TournamentCreatePa
 import ChampionshipPage from "../pages/admin/championship/ChampionshipPage";
 import CategoryPage from "../pages/admin/categories/categoryPage";
 import ChampionshipSetupPage from "../pages/admin/championship/ChampionshipSetupPage";
+import PlayerPage from "../pages/admin/player/PlayerPage";
+import PlayerListPage from "../pages/admin/player/PlayerListPage";
 
 // Componente para proteger rutas
 const ProtectedRoute = ({ children }) => {
@@ -50,6 +52,12 @@ const AppRouter = () => {
                         <Route path="lista" element={<EquiposPage />} />
                         <Route path="historico" element={<EquiposHistoricoPage />} />
                     </Route>
+
+                    <Route path="jugadores" >
+                        <Route path="nuevo-juagador" element={<PlayerPage />} />
+                        <Route path="listar-jugadores" element={<PlayerListPage />} />
+                    </Route>
+
                     <Route path="vocalias" >
                         <Route path="lista" element={<VocaliaPage />} />
                         <Route path="historico" element={<VocaliaHistoricoPage />} />

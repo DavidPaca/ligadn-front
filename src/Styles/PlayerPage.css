@@ -1,0 +1,71 @@
+/* src/styles/PlayerPage.css */
+
+.player-page {
+    padding: 20px;
+}
+
+/* Contenedor del formulario dentro de la Card */
+.player-form-container {
+    background-color: #ffffff;
+}
+
+.player-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.player-form label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* SOLUCIÓN AL FONDO NEGRO */
+.player-form input[type="text"],
+.player-form input[type="number"],
+.player-form input[type="date"],
+.player-form select {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: #ffffff !important; /* Forzamos fondo blanco */
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #1e293b !important; /* Texto oscuro para legibilidad */
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.player-form input:focus,
+.player-form select:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Estilo para el Checkbox del Capitán */
+.player-form input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #10b981;
+}
+
+/* Grid responsivo */
+.player-form-grid {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; 
+    padding: 20px;
+}
+
+
+@media (max-width: 768px) {
+    .player-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -553,56 +553,6 @@
     }
 }
 
-
-/*                         *******************************************************/
-    /**********************                        DATATABLE                     *********************/
-/*                         *******************************************************/
-/* --- Arreglos de visibilidad para DataTable --- */
-
-/* 1. Selector de número de filas (el dropdown que se ve vacío) */
-.dataTables_length select {
-    color: #1e293b !important; /* Gris oscuro/Negro */
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 4px !important;
-    border-radius: 4px !important;
-}
-
-/* 2. El texto del buscador (lo que escribes) */
-.dataTables_filter input {
-    color: #1e293b !important;
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 6px !important;
-    padding: 5px 10px !important;
-}
-
-/* 3. Números de paginación (Primero, Anterior, 1, Siguiente...) */
-.dataTables_paginate .paginate_button {
-    color: #475569 !important; /* Gris */
-}
-
-.dataTables_paginate .paginate_button.current {
-    color: #ffffff !important; /* Blanco solo para el activo */
-    background: #16a34a !important; /* Fondo verde */
-    border: 1px solid #16a34a !important;
-}
-
-/* 4. Texto informativo (Showing 1 to 2 of 2 entries) */
-.dataTables_info {
-    color: #64748b !important;
-    font-size: 0.85rem !important;
-    margin-top: 10px !important;
-}
-
-/* 5. Asegurar que las flechas de ordenamiento sean visibles */
-table.dataTable thead .sorting:before,
-table.dataTable thead .sorting:after {
-    color: #94a3b8 !important;
-    opacity: 0.8 !important;
-}
-
-
 /*                         *******************************************************/
     /**********************                        DASHBOARD                      *********************/
 /*                         *******************************************************/
