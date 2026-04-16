@@ -10,6 +10,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const [isVocaliaOpen, setIsVocaliaOpen] = useState(location.pathname.includes("vocalias"));
   const [isChampionshipOpen, setIsChampionshipOpen] = useState(location.pathname.includes("championship"));
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(location.pathname.includes("categorias"));
+  const [isPlayersOpen, setIsPlayersOpen] = useState(location.pathname.includes("jugadores"));
 
   useEffect(() => {
     const isInEquiposRoute = location.pathname.includes("equipos");
@@ -38,6 +39,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const isParentActiveVocalia = location.pathname.includes("vocalias") || isVocaliaOpen;
   const isParentActiveChampionship = location.pathname.includes("championship") || isChampionshipOpen;
   const isParentActiveCategories = location.pathname.includes("categorias") || isCategoriesOpen;
+  const isParentActivePlayers = location.pathname.includes("jugadores") || isPlayersOpen;
 
   return (
     <>
@@ -126,6 +128,41 @@ function Sidebar({ isOpen, toggleSidebar }) {
               </NavLink>
             </div>
           </div>
+
+          {/* ITEM CON SUBMENÚ JUGADORES */}
+          <div className="sidebar-dropdown">
+            <button
+              type="button"
+              className={`sidebar-link ${isParentActivePlayers ? "active" : ""}`}
+              onClick={() => setIsPlayersOpen(!isPlayersOpen)}
+              style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+            >
+              <div className="link-content">
+                <Users size={20} />
+                <span>Jugadores</span>
+              </div>
+              {isPlayersOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+            </button>
+
+            <div className={`submenu-container ${isPlayersOpen ? "expanded" : ""}`}>
+              <NavLink
+                to="/admin/jugadores/nuevo-juagador"
+                className={({ isActive }) => isActive ? "sidebar-sublink active" : "sidebar-sublink"}
+              >
+                <List size={16} />
+                <span>Nuevo Jugador</span>
+              </NavLink>
+
+              <NavLink
+                to="/admin/jugadores/listar-jugadores"
+                className={({ isActive }) => isActive ? "sidebar-sublink active" : "sidebar-sublink"}
+              >
+                <History size={16} />
+                <span>Listar Jugadores</span>
+              </NavLink>
+            </div>
+          </div>
+
 
           {/* ITEM CON SUBMENÚ VOCALIA */}
           <div className="sidebar-dropdown">
