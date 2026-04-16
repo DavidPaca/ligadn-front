@@ -11,6 +11,9 @@ import { getEquipo } from '../../services/EquipoService';
 import { getChampionship, getChampionshipAC } from '../../services/ChampionshipService';
 import { Navigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 
 
@@ -120,17 +123,12 @@ function DashboardPage() {
         },
     ];
 
-    // useEffect(() => {
-    //     EquiposList();
-    // }, [])
-
-    // useEffect(() => {
-    //     ChampionshipListAC();
-    // }, [])
-
-    // useEffect(() => {
-    //     ChampionshipList();
-    // }, [])
+    /////////// ESTADOS DE LOS CAMPEONATOS O TRONEOS ///////////
+    const STATUS_MAP = {
+        'AC': { label: 'En Curso', class: 'status-badge--activo' },
+        'PE': { label: 'Por Iniciar', class: 'status-badge--pendiente' },
+        'FI': { label: 'Finalizado', class: 'status-badge--finalizado' }
+    };
 
     useEffect(() => {
         const loadDashboardData = async () => {
@@ -181,7 +179,8 @@ function DashboardPage() {
                         <div>
                             <p className="stat-card__label">{item.title}</p>
                             {isLoading ? (
-                                <div className="skeleton skeleton-value" style={{ width: '40px', height: '24px', marginTop: '5px' }}></div>
+                                <LoadingSpinner size="small"/>
+                                // <div className="skeleton skeleton-value" style={{ width: '40px', height: '24px', marginTop: '5px' }}></div>
                             ) : (
                                 <h3 className="stat-card__value">{item.value}</h3>
                             )}
@@ -197,36 +196,59 @@ function DashboardPage() {
                 <div className="card">
                     <div className="card__header">
                         <h2 className="card__title">Lista de Campeonatos</h2>
-                        <div className="card__filters">
-                            {/* Aquí podrías añadir un pequeño selector de filtros luego */}
-                        </div>
                     </div>
 
                     <div className="tournament-list">
-                        {tournaments.map((t) => (
-                            <div key={t.id} className="match-row"> {/* Reutilizamos tu clase match-row por consistencia */}
-                                <div className="match-row__date">
-                                    <span className="match-row__date-label">TEMPORADA</span>
-                                    <span className="match-row__time" style={{ fontSize: '13px' }}>{t.date}</span>
-                                </div>
+                        {isLoading ? (
+                            /* ESTADO DE CARGA CON SPINNER */
+                            // <LoadingSpinner/>
+                            <LoadingSpinner message="Obteniendo datos de la liga..." />
+                        ) : dataListChampionshipAC.length > 0 ? (
+                            /* DATOS REALES CUANDO LLEGAN */
+                            dataListChampionshipAC.map((t) => {
+                                const statusInfo = STATUS_MAP[t.status_championship] || { label: 'Desconocido', class: '' };
 
-                                <div className="match-row__teams" style={{ justifyContent: 'flex-start', paddingLeft: '20px' }}>
-                                    <div>
-                                        <span className="match-row__team" style={{ display: 'block', fontSize: '16px' }}>{t.name}</span>
-                                        <span style={{ fontSize: '12px', color: '#64748b' }}>{t.teams} equipos inscritos</span>
+                                return (
+                                    <div key={t.championship_id} className="match-row">
+                                        <div className="match-row__date">
+                                            <span className="match-row__date-label">INICIO</span>
+                                            <span className="match-row__time" style={{ fontSize: '13px' }}>
+                                                {new Date(t.start_date).toLocaleDateString('es-EC', { month: 'short', year: 'numeric' })}
+                                            </span>
+                                        </div>
+
+                                        <div className="match-row__teams" style={{ justifyContent: 'flex-start', paddingLeft: '20px' }}>
+                                            <div>
+                                                <span className="match-row__team" style={{ display: 'block', fontSize: '16px', fontWeight: '600' }}>
+                                                    {t.name}
+                                                </span>
+                                                <span style={{ fontSize: '12px', color: '#64748b' }}>
+                                                    {t.type === 'categories' ? 'Torneo por Categorías' : 'Torneo Único'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                            <span className={`status-badge ${statusInfo.class}`}>
+                                                {statusInfo.label}
+                                            </span>
+
+                                            <button
+                                                className="btn-icon-link"
+                                                onClick={() => navigate(`/admin/setup-championship/${t.championship_id}`)}
+                                            >
+                                                <ArrowRight size={18} />
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                    <span className={`status-badge status-badge--${t.status.toLowerCase()}`}>
-                                        {t.status}
-                                    </span>
-                                    <button className="btn-icon-link">
-                                        <ArrowRight size={18} />
-                                    </button>
-                                </div>
+                                );
+                            })
+                        ) : (
+                            /* MENSAJE SI LA LISTA ESTÁ VACÍA */
+                            <div className="empty-state">
+                                <p>No hay campeonatos registrados.</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
 
