@@ -19,6 +19,9 @@ function EquiposPage() {
   const [createForm] = Form.useForm();
   const [updateForm] = Form.useForm();
 
+  //                                                        *****************************************************************
+  // *******************************************************                               DATA                              *******************************************************                                                                 *
+  //                                                        *****************************************************************
   /////////// LISTAR EQUIPOS ///////////
   const EquipoList = async () => {
     try {
@@ -203,10 +206,10 @@ function EquiposPage() {
           columns={columns}
           dataSource={filteredData} // Usamos la data filtrada
           loading={isLoading}
-          pagination={{ 
+          pagination={{
             pageSize: 10,
             responsive: true, // Hace que la paginación sea amigable en móviles
-            showSizeChanger: false 
+            showSizeChanger: false
           }}
           scroll={{ x: 'max-content' }} // <-- CLAVE: Permite deslizar la tabla si no cabe
           locale={{ emptyText: 'No hay equipos registrados' }}
